@@ -333,9 +333,9 @@ class kunden extends page{
 		$gammel=array_pop($data);
 		$pdf->table($header, $data);
 		$pdf->Ln();
-		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id!='3' AND produkte.id!=4 GROUP BY mwst.satz");
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id!=('3' OR '4') GROUP BY mwst.satz");
 		$betrag=$db->get_object($result);
-		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id = '3' AND produkte.id='4' GROUP BY mwst.satz");
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id =('3' OR '4' ) GROUP BY mwst.satz");
 		$betrag2=$db->get_object($result);
 		$pdf->Cell(100,5,"", 0, 0, 'L');
 		$pdf->Cell(35,5,"Gesamt:",0,0,'L');
