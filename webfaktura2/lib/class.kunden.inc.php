@@ -98,7 +98,10 @@ class kunden extends page{
 	function rechnung_fertig($id){
 		$return="";
 		$db=new datenbank();
-		$result=$db->query("update rechnungen set datum=NOW() set faellig=NOW()+14 where renr=$id");
+		$result=$db->query("update rechnungen set datum=NOW() where renr=$id");
+		$result=$db->query("select kunde from rechnungen where renr=$id");
+		$kunde=$db->get_object($result);
+		$_GET["id"]=$kunde->kunde;
 		return $return;
 	}
 
