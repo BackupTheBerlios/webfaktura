@@ -16,7 +16,9 @@ class kunden extends page{
 					$this->content.=$this->detail($_GET["id"]);
 					break;
 		case "rechnung_fertig":	$this->content.=$this->rechnung_fertig($_GET["id"]);
-					//$this->content.=$this->detail($_GET["id"]);
+					$this->content.=$this->rechnung_pdf($_GET["id"]);
+					break;
+		case "rechnung_pdf":	$this->content.=$this->rechnung_pdf($G_GET["id"]);
 					break;
 		default:	$this->content.=$this->not_implemented();
 		}
@@ -62,9 +64,11 @@ class kunden extends page{
 		$return.="</table>\n";
 		$return.="</td></tr>\n</table><br><br><br>\n";
 		//Offene Posten
-		$return.=faktura::table("select posten.id as id, posten.datum as Datum, produkte.name as Produkt, posten.anzahl as Anzahl, posten.kommentar as Kommentar from posten,produkte where kunde=$kunde->kdnr and isnull(rechnung) and produkte.id=posten.produkt order by datum", $db, "offeneposten", "fakturierbare(r) Posten gefunden:", "Keine fakturierbaren Posten vorhanden...", "Bearbeiten", "Löschen", "<a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->kdnr\">Rechnung stellen</a>");
+		$return.=faktura::table("select posten.id as id, posten.datum as Datum, produkte.name as Produkt, posten.anzahl as Anzahl, posten.kommentar as Kommentar from posten,produkte where kunde=$kunde->kdnr and isnull(rechnung) and produkte.id=posten.produkt order by datum", $db, "offeneposten", "fakturierbare(r) Posten gefunden:", "", "Bearbeiten", "Löschen", "<a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->kdnr\">Rechnung stellen</a>");
 		//fertige Rechnungen
 		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer from rechnungen where rechnungen.datum is NULL and rechnungen.kunde=$kunde->kdnr", $db, "fertigrechnung", "fertige Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_fertig&id=ID\">Freigeben</a>");
+		//offene Rechnungen
+		$retrun.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer, rechnungen.datum as Datum, rechnungen.faellig as Fällig from rechnungen where rechnungen.kunde=$kunde->kdnr and rechnungen.bezahlt=Nein and rechnungen.datum is not NULL", $db, "fertigrechnung", "offene Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_pdf&id=ID\">Ansicht</a>","Bearbeiten");
 		return $return;
 	}
 
@@ -101,7 +105,6 @@ class kunden extends page{
 		$query="update rechnungen set datum='".date("Y-m-d")."', faellig='".date("Y-m-d",time()+1209600)."' where renr='$id'";
 		$result=$db->query($query);
 		$return.=$query;
-		return.=$this->rechnung->pdf($id);
 		return $return;
 	}
 
