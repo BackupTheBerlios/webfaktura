@@ -15,6 +15,9 @@ class kunden extends page{
 		case "rechnung_neu":	$this->content.=$this->rechnung_neu($_GET["id"]); 
 					$this->content.=$this->detail($_GET["id"]);
 					break;
+		case "rechnung_fertig":	$this->content.=$this->rechnung_fertig($_GET["id"]);
+					$this->content.=$this->detail($_GET["id"]);
+					break;
 		default:	$this->content.=$this->not_implemented();
 		}
 	}
@@ -59,9 +62,9 @@ class kunden extends page{
 		$return.="</table>\n";
 		$return.="</td></tr>\n</table><br><br><br>\n";
 		//Offene Posten
-		$return.=faktura::table("select posten.id as id, posten.datum as Datum, produkte.name as Produkt, posten.anzahl as Anzahl, posten.kommentar as Kommentar from posten,produkte where kunde=$kunde->kdnr and isnull(rechnung) and produkte.id=posten.produkt order by datum", $db, "offeneposten", "fakturierbare(r) Poste(n) gefunden:", "Keine fakturierbaren Posten vorhanden...", "Bearbeiten", "Löschen", "<a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->kdnr\">Rechnung stellen</a>");
+		$return.=faktura::table("select posten.id as id, posten.datum as Datum, produkte.name as Produkt, posten.anzahl as Anzahl, posten.kommentar as Kommentar from posten,produkte where kunde=$kunde->kdnr and isnull(rechnung) and produkte.id=posten.produkt order by datum", $db, "offeneposten", "fakturierbare(r) Posten gefunden:", "Keine fakturierbaren Posten vorhanden...", "Bearbeiten", "Löschen", "<a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->kdnr\">Rechnung stellen</a>");
 		//fertige Rechnungen
-		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer from rechnungen where rechnungen.datum is NULL and rechnungen.kunde=$kunde->kdnr", $db, "fertigrechnung", "fertige Rechnung(en) gefunden");
+		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer from rechnungen where rechnungen.datum is NULL and rechnungen.kunde=$kunde->kdnr", $db, "fertigrechnung", "fertige Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_fertig&id=ID\">Freigeben</a>");
 		return $return;
 	}
 
@@ -88,16 +91,23 @@ class kunden extends page{
 		$result=$db->query($query);
 		$query="commit;";
 		$result=$db->query($query);
-		$return.="Rechnung generiert!";
+		//$return.="Rechnung generiert!";
 		return $return;
 	}
-	
+
+	function rechnung_fertig($id){
+		$return="";
+		$db=new datenbank();
+		$result=$db->query("update rechnungen set datum=NOW() set faellig=NOW()+14 where renr=$id");
+		return $return;
+	}
+
 	function rechnung_pdf($id){
 		$return="";
 		$db=new datenbank();
-		$result_rechnung=$db->query("select * from rechnungen where id=$id");
+		$result_rechnung=$db->query("select * from rechnungen where renr=$id");
 		$rechnung=$db->get_object($result_rechnung);
-		$result_kunde=$db->query("select * from kunden where id=$rechnung->kunde");
+		$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
 		$kunde=$db->get_object($result_kunde);
 		$pdf=new pdf('P', 'mm', 'A4');
 		$pdf->Open();
