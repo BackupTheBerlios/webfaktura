@@ -113,14 +113,14 @@ class kunden extends page{
 		$db=new datenbank();
 		$result_rechnung=$db->query("select * from rechnungen where renr='$id'");
 		$rechnung=$db->get_object($result_rechnung);
-		$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
-		$kunde=$db->get_object($result_kunde);
+		//$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
+		//$kunde=$db->get_object($result_kunde);
 		$pdf=new pdf('P', 'mm', 'A4');
 		$pdf->Open();
 		$pdf->AddPage();
-		$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort);
+		//$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort);
 		$pdf->SetFont('Arial','',12);
-		$pdf->Cell(40,10,'Hello World!');
+		$pdf->Cell(40,10,'$rechnung->renr');
 		$this->output=0;
 		$pdf->Output();
 		return $return;
