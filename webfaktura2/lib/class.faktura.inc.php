@@ -6,13 +6,13 @@ class faktura{
 		$return="";
 		$result=$db->query($query);
 		if($db->num($result)>0){
-			$return.="<table border=\"0\" cellpadding=\"2\" cellspacing=\"2\">\n";
+			$return.="<table border=\"1\" cellpadding=\"2\" cellspacing=\"2\">\n";
 			$nr=0;
 			if($function1!=""){$nr+=1;}
 			if($function2!=""){$nr+=1;}
 			$num=$db->num_fields($result);
 			$return.="<tr><td colspan='";
-			$return.=$num+$nr-1;
+			$return.=($num+$nr-3);
 			$return.="'>";
 			if(($anzahlstring!="") AND ($anzahlstring!="&nbsp;")){$return.=$db->num($result)." ";}
 			$return.=$anzahlstring."</td><td align=\"right\">$gfunction1</td><td align=\"right\">$gfunction2</td></tr>\n";
