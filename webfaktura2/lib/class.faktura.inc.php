@@ -25,6 +25,7 @@ class faktura{
 			$return.="</tr>\n";
 			while($posten=$db->get_row($result)){
 				$zeile="zeile".$id.$posten[0];
+				$return.="<tr id=\"$zeile\" style=\"background-color: lightgrey\" onmouseover=\"changecolor('$zeile','lightgreen');\" onmouseout=\"changecolor('$zeile','lightgrey');\">";
 				if($function1!=""){
 					$func1=str_replace("ID", $posten[0], $function1);
 					$return.="<td>$func1</td>";
@@ -33,7 +34,6 @@ class faktura{
 					$func2=str_replace("ID", $posten[0], $function2);
 					$return.="<td>$func2</td>";
 				}
-				$return.="<tr id=\"$zeile\" style=\"background-color: lightgrey\" onmouseover=\"changecolor('$zeile','lightgreen');\" onmouseout=\"changecolor('$zeile','lightgrey');\">";
 				for($i=1; $i<$num; $i++){
 					$return.="<td>$posten[$i]</td>";
 				}
