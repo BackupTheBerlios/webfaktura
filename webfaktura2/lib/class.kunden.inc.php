@@ -124,7 +124,7 @@ class kunden extends page{
 		$pdf->Cell(80,5,"RECHNUNG");
 		$pdf->Ln();
 		$pdf->SetFont("Arial", "", 10);
-		$pdf->MultiCell(0,20,"Sehr geehrte Damen und Herren,\n hiermit erlaube ich mir folgendes in Rechnung zu stellen:");
+		$pdf->MultiCell(0, 0, "Sehr geehrte Damen und Herren,\n hiermit erlaube ich mir folgendes in Rechnung zu stellen:");
 		$this->output=0;
 		$pdf->Output();
 		return $return;

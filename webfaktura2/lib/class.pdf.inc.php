@@ -56,7 +56,7 @@ class pdf extends FPDF
 		$this->Ln();
 		$this->SetX(23);
 		$this->Cell(60,4, $ort);
-		$this->SetY(95);
+		$this->SetY(94);
 		$this->Cell(60,4, $renr);
 		$this->Cell(100, 4, $datum, 0, 0, "R");
 		$this->SetXY($x, $y);
