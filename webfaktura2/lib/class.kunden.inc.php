@@ -144,7 +144,7 @@ class kunden extends page{
 		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Rechnungsbetrag bis spätestens zum $rechnung->faellig auf das unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit mit Ihnen würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
 		$pdf->Ln(10);
 		$pdf->Write(5, $GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
-		$pdf->Image($GLOBALS["conf"]["rechnung"]["unterschrift"],25,170,50);
+		$pdf->Image($GLOBALS["conf"]["rechnung"]["unterschrift"],25,$this->GetY()-15,50);
 		$this->output=0;
 		$pdf->Output();
 		return $return;
