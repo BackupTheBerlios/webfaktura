@@ -5,6 +5,7 @@ class pdf extends FPDF
 {
 	//Page header
 	function Header(){
+		$this->SetLeftMargin(25);
 		//Logo
 		$this->Image($GLOBALS["conf"]["rechnung"]["logo"],150,20,0,38);
 		//Arial bold 15
@@ -34,12 +35,11 @@ class pdf extends FPDF
 		$this->Line(0,138,6,138);
 		$this->Line(0,93,4,93);
 		//Datum & Rechnungsnummer
-		$this->SetY(50);
+		$this->SetY(90);
 		$this->Cell(60, 4, "Rechnungsnummer");
-		$this->Cell(80, 4, "Datum", 0, 0, "R");
+		$this->Cell(100, 4, "Datum", 0, 0, "R");
 		//Line break
-		$this->SetLeftMargin(25);
-		$this->Ln(60);
+		$this->Ln(10);
 		$this->SetFont("Arial","",10);
 	}
 
@@ -56,7 +56,9 @@ class pdf extends FPDF
 		$this->Ln();
 		$this->SetX(23);
 		$this->Cell(60,4, $ort);
-		$this->SetX(50);
+		$this->SetY(95);
+		$this->Cell(60,4, $renr);
+		$this->Cell(100, 4, $datum, 0, 0, "R");
 		$this->SetXY($x, $y);
 	}
 
