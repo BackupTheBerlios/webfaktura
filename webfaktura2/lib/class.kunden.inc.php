@@ -111,8 +111,9 @@ class kunden extends page{
 	function rechnung_pdf($id){
 		$return="";
 		$db=new datenbank();
-		$result_rechnung=$db->query("select * from rechnungen where renr='$id'");
-		$rechnung=$db->get_object($result_rechnung);
+		$query="select * from rechnungen where renr='$id'";
+		$result=$db->query($query);
+		$rechnung=$db->get_object($result);
 		//$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
 		//$kunde=$db->get_object($result_kunde);
 		$pdf=new pdf('P', 'mm', 'A4');
@@ -123,6 +124,7 @@ class kunden extends page{
 		$pdf->Cell(40,10,$rechnung->renr." ".$rechnung->kunde);
 		//$this->output=0;
 		//$pdf->Output();
+		$return.=$query;
 		$return.=$rechnung->renr;
 		return $return;
 	}

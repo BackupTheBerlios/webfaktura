@@ -34,6 +34,7 @@ class pdf extends FPDF
 		$this->Line(0,138,6,138);
 		$this->Line(0,93,4,93);
 		//Line break
+		$this->SetLeftMargin(25);
 		$this->Ln(60);
 	}
 
