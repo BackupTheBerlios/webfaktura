@@ -24,6 +24,10 @@ class kunden extends page{
 					break;
 		case "za_pdf":		$this->content.=$this->za_pdf($_GET["id"]);
 					break;
+		case "ma_neu":	$this->content.=$this->ma_neu($_GET["id"]);
+					break;
+		case "ma_pdf":		$this->content.=$this->ma_pdf($_GET["id"]);
+					break;
 		default:	$this->content.=$this->not_implemented();
 		}
 	}
@@ -74,7 +78,13 @@ class kunden extends page{
 		//offene Rechnungen
 		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer, rechnungen.datum as Datum, rechnungen.faellig as Faellig from rechnungen where rechnungen.kunde=$kunde->kdnr and rechnungen.datum is not null and rechnungen.bezahlt='Nein'", $db, "offenerechnung", "offene Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=za_neu&id=ID\">Zahlungserinnerung</a>");
 		//Zahlungserinnerungen
-		$return.=faktura::table("select zahlungserinnerungen.zanr as id, zahlungserinnerungen.zanr as Nummer, zahlungserinnerungen.renr as Rechnungsnummer, zahlungserinnerungen.datum as Datum, zahlungserinnerungen.faellig as Faellig from zahlungserinnerungen where zahlungserinnerungen.kdnr=$kunde->kdnr and zahlungserinnerungen.bezahlt='Nein'", $db, "offeneza", "offene Zahlungserinnerung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=za_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_neu&id=ID\">Mahnung</a>");
+		$return.=faktura::table("select zahlungserinnerungen.zanr as id, zahlungserinnerungen.zanr as Nummer, zahlungserinnerungen.renr as Rechnungsnummer, zahlungserinnerungen.datum as Datum, zahlungserinnerungen.faellig as Faellig from zahlungserinnerungen where zahlungserinnerungen.kdnr=$kunde->kdnr and zahlungserinnerungen.bezahlt='Nein'", $db, "offeneza", "offene Zahlungserinnerung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=za_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=ma_neu&id=ID\">Mahnung</a>");
+		//Mahnungen Stufe 1
+		$return.=faktura::table("select mahnungen.manr as id, mahnungen.manr as Nummer, mahnungen.renr as Rechnungsnummer, mahnungen.datum as Datum, mahnungen.faellig as Faellig from mahnungen where mahnungen.kdnr=$kunde->kdnr and mahnungen.bezahlt='Nein' and mahnungen.stufe='1'", $db, "offenema1", "offene Mahnung(en)  Stufe 1 gefunden", "", "<a href=\"index.php?sub=kunden&action=ma_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_stufe2&id=ID\">Stufe 2</a>");
+		//Mahnungen Stufe 2
+		$return.=faktura::table("select mahnungen.manr as id, mahnungen.manr as Nummer, mahnungen.renr as Rechnungsnummer, mahnungen.datum as Datum, mahnungen.faellig as Faellig from mahnungen where mahnungen.kdnr=$kunde->kdnr and mahnungen.bezahlt='Nein' and mahnungen.stufe='2'", $db, "offenema2", "offene Mahnung(en)  Stufe 2 gefunden", "", "<a href=\"index.php?sub=kunden&action=ma_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_stufe3&id=ID\">Stufe 3</a>");
+		//Mahnungen Stufe 3
+		$return.=faktura::table("select mahnungen.manr as id, mahnungen.manr as Nummer, mahnungen.renr as Rechnungsnummer, mahnungen.datum as Datum, mahnungen.faellig as Faellig from mahnungen where mahnungen.kdnr=$kunde->kdnr and mahnungen.bezahlt='Nein' and mahnungen.stufe='3'", $db, "offenema3", "offene Mahnung(en)  Stufe 3 gefunden", "", "<a href=\"index.php?sub=kunden&action=ma_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_stufe4&id=ID\">Stufe 4</a>");
 
 		return $return;
 	}
@@ -132,7 +142,7 @@ class kunden extends page{
 		$pdf->Ln(10);
 		$pdf->SetFont("Arial", "", 10);
 		$pdf->Write(5, "Sehr geehrte Damen und Herren,\nhiermit erlaube ich mir folgendes in Rechnung zu stellen:\n\n");
-		$query="select posten.datum as Datum, posten.kommentar as Beschreibung, posten.anzahl as Anzahl, produkte.name as Artikel, produkte.preis as Preis, (produkte.preis*posten.anzahl) as Summe from posten, produkte where posten.rechnung='$id' and produkte.id=posten.produkt";
+		$query="select posten.datum as Datum, posten.kommentar as Beschreibung, posten.anzahl as Anzahl, produkte.name as Artikel, produkte.preis as Preis, (produkte.preis*posten.anzahl) as Summe from posten, produkte where posten.rechnung='$id' and produkte.id=posten.produkt and produkte.id!='3'";
 		$result=$db->query($query);
 		$header=array("Datum", "Beschreibung", "Anzahl", "Artikel", "Preis", "Summe");
 		while($data[]=$db->get_row($result))
@@ -141,11 +151,13 @@ class kunden extends page{
 		$gammel=array_pop($data);
 		$pdf->table($header, $data);
 		$pdf->Ln();
-		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' GROUP BY mwst.satz");
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id!='3' GROUP BY mwst.satz");
 		$betrag=$db->get_object($result);
+		//$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id = '3' GROUP BY mwst.satz");
+		//$betrag2=$db->get_object($result);
 		$pdf->Cell(100,5,"", 0, 0, 'L');
 		$pdf->Cell(35,5,"Gesamt:",0,0,'L');
-		$pdf->Cell(20,5,number_format($betrag->Gesamt,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Cell(20,5,number_format(($betrag->Gesamt),2,",",".").EURO, 0, 1, 'R');
 		$pdf->Cell(100,5,"", 0, 0, 'L');
 		$pdf->Cell(35,5,"Mehrwertsteuer (".number_format($betrag->satz)."%):", 0, 0, 'L');
 		$pdf->Cell(20,5,number_format($betrag->MWST,2,",",".").EURO, 0, 1, 'R');
@@ -207,4 +219,71 @@ class kunden extends page{
 		$pdf->Output();
 		return $return;
 	}
+
+	function ma_neu($id){
+		$return="";
+		$db=new datenbank();
+		$query="select zahlungserinnerungen.kdnr, zahlungserinnerungen.renr  from zahlungserinnerungen where zahlungserinnerungen.zanr='$id'";
+		$result=$db->query($query);
+		$kd=$db->get_object($result);
+		$renr=$kd->renr;
+		$kdnr=$kd->kdnr;
+		$manr=$this->gen_renr("MA");
+		$query="insert into mahnungen values('$manr','$renr','$kdnr','".date("Y-m-d")."', '".date("Y-m-d",time()+1209600)."', 'Nein','1')";
+		$db->query($query);
+		$query="insert into posten values('','$kdnr','".date("Y-m-d")."','3','1.00','','$renr')";
+		$db->query($query);
+		return $return;
+	}
+
+		function ma_pdf($id){
+		$return="";
+		$db=new datenbank();
+		$query="select * from rechnungen,mahnungen  where rechnungen.renr=mahnungen.renr and mahnungen.manr='$id'";
+		$result=$db->query($query);
+		$rechnung=$db->get_object($result);
+		$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
+		$kunde=$db->get_object($result_kunde);
+		$pdf=new pdf('P', 'mm', 'A4');
+		$pdf->Open();
+		$pdf->AddPage();
+		$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort, $rechnung->manr, $rechnung->datum);
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Cell(80,5,"Mahnung");
+		$pdf->Ln(10);
+		$pdf->SetFont("Arial", "", 10);
+		$pdf->Write(5, "Sehr geehrte Damen und Herren,\nleider konnte ich noch keinen Zahlungseingang zur Rechnung $rechnung->renr feststellen. Hier die Auflistung der aufgrund dieser Rechnung unbezahlten Posten::\n\n");
+		$query="select posten.datum as Datum, posten.kommentar as Beschreibung, posten.anzahl as Anzahl, produkte.name as Artikel, produkte.preis as Preis, (produkte.preis*posten.anzahl) as Summe from posten, produkte where posten.rechnung='$rechnung->renr' and produkte.id=posten.produkt";
+		$result=$db->query($query);
+		$header=array("Datum", "Beschreibung", "Anzahl", "Artikel", "Preis", "Summe");
+		while($data[]=$db->get_row($result))
+		{
+		}
+		$gammel=array_pop($data);
+		$pdf->table($header, $data);
+		$pdf->Ln();
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id!='3' GROUP BY mwst.satz");
+		$betrag=$db->get_object($result);
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id = '3' GROUP BY mwst.satz");
+		$betrag2=$db->get_object($result);
+		$pdf->Cell(100,5,"", 0, 0, 'L');
+		$pdf->Cell(35,5,"Gesamt:",0,0,'L');
+		$pdf->Cell(20,5,number_format(($betrag->Gesamt+$betrag2->Gesamt),2,",",".").EURO, 0, 1, 'R');
+		$pdf->Cell(100,5,"", 0, 0, 'L');
+		$pdf->Cell(35,5,"Mehrwertsteuer (".number_format($betrag->satz)."%):", 0, 0, 'L');
+		$pdf->Cell(20,5,number_format($betrag->MWST,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Ln();
+		$pdf->Cell(100,5,"", 0, 0, 'L');
+		$pdf->Cell(35,5,"Mahnbetrag:", 0, 0, 'L');
+		$pdf->Cell(20,5,number_format($betrag->Gesamt+$betrag2->Gesamt+$betrag->MWST,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Ln();
+		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Betrag bis spätestens zum $rechnung->faellig auf das unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit mit Ihnen würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
+		$pdf->Ln(15);
+		$pdf->Write(5, $GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
+		$pdf->Image($GLOBALS["conf"]["rechnung"]["unterschrift"],25,$pdf->GetY()-10,50);
+		$this->output=0;
+		$pdf->Output();
+		return $return;
+	}
+
 }
