@@ -78,14 +78,27 @@ class kunden extends page{
 		return $return;
 	}
 	
+	function gen_renr($praefix){
+		$return="";
+		mt_srand((double)microtime()*1000000);
+		for($i=1; i<6; i++){
+			$return.=mt_rand(0,9);
+		}
+		return $praefix.$return;
+	}
+
 	function rechnung_neu($id){
 		$return="";
 		$db=new datenbank();
 		$result=$db->query("select * from kunden where id=$id");
 		$kunde=$db->get_object($result);
-		$result=$db->query("select * from posten where kunde=$id and rechnung is NULL");
-		$result=$db->query("insert into rechnungen values('RE51463',$id,'','')");
-		$result=$db->query("update posten set rechnung='RE51463' where kunde=$id and rechnung is NULL");
+		$renr=$this->gen_renr("RE");
+		$query="begin\n";
+		$query.="select * from posten where kunde=$id and rechnung is NULL;\n";
+		$query.="insert into rechnungen (renr, kunde) values($renr, $id)\n";
+		$query.="update posten set rechnung='RE51463' where kunde=$id and rechnung is NULL\n";
+		$query.="commit;";
+		$result=$db->query($query);
 		$return.="Rechnung generiert!";
 		return $return;
 	}
