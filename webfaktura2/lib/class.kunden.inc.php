@@ -94,21 +94,13 @@ class kunden extends page{
 		$kunde=$db->get_object($result);
 		$renr=$this->gen_renr("RE");
 		$query="begin work;";
-		$return.=$query;
 		$result=$db->query($query);
-		$return.=mysql_errno().": ".mysql_error()."<br>\n";
 		$query="insert into `rechnungen` (`renr`, `kunde`) values('$renr', $id);";
-		$return.=$query;
 		$result=$db->query($query);
-		$return.=mysql_errno().": ".mysql_error()."<br>\n";
 		$query="update posten set rechnung='$renr' where kunde=$id and rechnung is NULL;";
-		$return.=$query;
 		$result=$db->query($query);
-		$return.=mysql_errno().": ".mysql_error()."<br>\n";
-		$query="rollback;";
-		$return.=$query;
+		$query="commit;";
 		$result=$db->query($query);
-		$return.=mysql_errno().": ".mysql_error()."<br>\n";
 		$return.="Rechnung generiert!";
 		return $return;
 	}
