@@ -6,7 +6,7 @@ class faktura{
 		$return="";
 		$result=$db->query($query);
 		if($db->num($result)>0){
-			$return.="<table border=\"0\" cellpadding=\"2\" cellspacing=\"2\" width=\"100%\">\n";
+			$return.="<table border=\"0\" cellpadding=\"2\" cellspacing=\"2\">\n";
 			$nr=0;
 			if($function1!=""){$nr+=1;}
 			if($function2!=""){$nr+=1;}

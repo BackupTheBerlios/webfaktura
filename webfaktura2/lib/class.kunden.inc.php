@@ -28,7 +28,7 @@ class kunden extends page{
 	function index(){
 		$return="";
 		$db=new datenbank();
-		$return.=faktura::table("select kunden.kdnr as id, kunden.kdnr as Kundennummer, kunden.firma as Firma, CONCAT(kunden.strasse, ' ', kunden.hausnummer) AS Adresse, kunden.plz as PLZ, kunden.ort AS Ort from kunden order by firma asc", $db, "kundentabelle", "Kunden", "Keine Kunden vorhanden...");
+		$return.=faktura::table("select kunden.kdnr as id, kunden.kdnr as Kundennummer, kunden.firma as Firma, CONCAT(kunden.strasse, ' ', kunden.hausnummer) AS Adresse, kunden.plz as PLZ, kunden.ort AS Ort from kunden order by firma asc", $db, "kundentabelle", "Kunden", "Keine Kunden vorhanden...", "<a href=\"index.php?sub=kunden&action=edit&id=ID\">Bearbeiten</a>", "Anzeigen");
 		return $return;
 	}
 
