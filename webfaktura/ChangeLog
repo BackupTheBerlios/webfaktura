@@ -1,54 +1,35 @@
+2002-10-04  Philipp Kirchner  <mail@philippkirchner.de>
+
+	* Anfang Installationsmodul
+
 2002-10-02  Philipp Kirchner <mail@philippkirchner.de>
 	* Bugfixes for PHP 4.2
 	* Notice that this application is Alpha and lacks a lot of funtionality!
-
 2002-09-21  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Rechnungsmodul fertig
 	* Release 0.0.4
-
 2002-09-21  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Postenmodul fertig
 	* Farbanpassungen
 	* Release 0.0.3
-
 2002-09-21  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Produktmodul fertig!
 	* Release 0.0.2
-
 2002-09-20  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Release 0.0.1
-
 2002-09-20  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Kundenmodul fertig!
-
 2002-09-19  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Kundenmodul: Listenansicht funktioniert nun
 	* CSS-Änderungen
-
 2002-09-19  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Modularität erhöht, CSS eingeführt
-
 2002-09-17  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Erstes Modul für Kundenverwaltung portieren
-
 2002-09-17  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Fehler im Fehler beseitigt, MySQL-Fehlerbehandlung nun ok
-
 2002-09-17  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Fehler beseitigt
-
 2002-09-17  Philipp Kirchner <mail@philippkirchner.de>
-
 	* Erweiterte Fehlerbehandlung für MySQL
-
 
