@@ -98,6 +98,7 @@ class kunden extends page{
 		$query.="update posten set rechnung='$renr' where kunde=$id and rechnung is NULL;";
 		$query.="commit;";
 		$result=$db->query($query);
+		$return.=mysql_errno().": ".mysql_error()."<br>\n";
 		$return.=$query;
 		$return.="Rechnung generiert!";
 		return $return;
