@@ -10,10 +10,10 @@ include("lib/init.php");
 
 $page = new page();
 $page->init("WebFaktura");
-
-$mod_name="mod_$action";
+$page->generate_menu();
 $mod = new $action($page, $db);
 $mod->start();
+$mod->render();
 $page->render();
 $page->output();
 
