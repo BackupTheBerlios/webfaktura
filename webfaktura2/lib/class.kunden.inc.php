@@ -16,7 +16,7 @@ class kunden extends page{
 					$this->content.=$this->detail($_GET["id"]);
 					break;
 		case "rechnung_fertig":	$this->content.=$this->rechnung_fertig($_GET["id"]);
-					$this->content.=$this->detail($_GET["id"]);
+					//$this->content.=$this->detail($_GET["id"]);
 					break;
 		default:	$this->content.=$this->not_implemented();
 		}
@@ -98,10 +98,7 @@ class kunden extends page{
 	function rechnung_fertig($id){
 		$return="";
 		$db=new datenbank();
-		$result=$db->query("update rechnungen set datum=NOW() where renr=$id");
-		$result=$db->query("select kunde from rechnungen where renr=$id");
-		$kunde=$db->get_object($result);
-		$_GET["id"]=$kunde->kunde;
+		$result=$db->query("update rechnungen set datum=".date("Y-m-d")." where renr=$id");
 		return $return;
 	}
 
