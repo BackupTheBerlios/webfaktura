@@ -134,9 +134,9 @@ class kunden extends page{
 		$gammel=array_pop($data);
 		$pdf->table($header, $data);
 		$pdf->Ln();
-		$pdf->Write("Bitte überweisen Sie den oben genannten Betrag bis spätestens zum $rechnung->faellig auf des unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
+		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Betrag bis spätestens zum $rechnung->faellig auf des unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
 		$pdf->Ln();
-		$pdf->Write($GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
+		$pdf->Write(5, $GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
 		$this->output=0;
 		$pdf->Output();
 		return $return;
