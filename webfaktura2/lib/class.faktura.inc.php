@@ -11,7 +11,7 @@ class faktura{
 			if($function1!=""){$nr+=1;}
 			if($function2!=""){$nr+=1;}
 			$return.="<tr><td colspan=\".$num+$nr-1.\">";
-			if($anzahlstring!=("" OR "&nbsp;")){$return.=$db->num($result)." ";}
+			if(($anzahlstring!="") AND ($anzahlstring!="&nbsp;")){$return.=$db->num($result)." ";}
 			$return.=$anzahlstring."</td><td align=\"right\">$gfunction1</td><td align=\"right\">$gfunction2</td></tr>\n";
 			$return.="<tr>";
 			if($function1!=""){
