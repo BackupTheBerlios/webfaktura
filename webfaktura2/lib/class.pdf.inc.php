@@ -6,6 +6,7 @@ class pdf extends FPDF
 	//Page header
 	function Header(){
 		$this->SetLeftMargin(25);
+		$this->SetRightMargin(20);
 		//Logo
 		$this->Image($GLOBALS["conf"]["rechnung"]["logo"],150,20,0,38);
 		//Arial bold 15

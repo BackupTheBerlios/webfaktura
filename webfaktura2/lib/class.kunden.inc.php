@@ -134,7 +134,11 @@ class kunden extends page{
 		$gammel=array_pop($data);
 		$pdf->table($header, $data);
 		$pdf->Ln();
-		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Betrag bis spätestens zum $rechnung->faellig auf des unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' GROUP BY mwst.satz");
+		$betrag=$db->get_object($result);
+		$this->Cell(100,5,"Gesamt: ".$betrag->Gesamt, 0, 1, 'R');
+		$pdf->Ln();
+		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Rechnungsbetrag bis spätestens zum $rechnung->faellig auf das unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit mit Ihnen würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
 		$pdf->Ln();
 		$pdf->Write(5, $GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
 		$this->output=0;
