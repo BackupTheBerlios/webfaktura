@@ -81,7 +81,7 @@ class kunden extends page{
 	function gen_renr($praefix){
 		$return="";
 		mt_srand((double)microtime()*1000000);
-		for($i=1; i<6; i++){
+		for($i=1, i<6, i++){
 			$return.=mt_rand(0,9);
 		}
 		return $praefix.$return;
