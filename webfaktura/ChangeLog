@@ -1,7 +1,9 @@
+2002-10-09  Philipp Kirchner  <mail@philippkirchner.de>
+
+	* Install-Skript weitestgehend fertig....
+
 2002-10-04  Philipp Kirchner  <mail@philippkirchner.de>
-
 	* Anfang Installationsmodul
-
 2002-10-02  Philipp Kirchner <mail@philippkirchner.de>
 	* Bugfixes for PHP 4.2
 	* Notice that this application is Alpha and lacks a lot of funtionality!
