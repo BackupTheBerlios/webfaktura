@@ -12,7 +12,9 @@ class kunden extends page{
 		switch($action){
 		case "index":	$this->content.=$this->index(); break;
 		case "detail":	$this->content.=$this->detail($_GET["id"]); break;
-		case "rechnung_neu":	$this->content.=$this->rechnung_neu($_GET["id"]); break;
+		case "rechnung_neu":	$this->content.=$this->rechnung_neu($_GET["id"]); 
+					$this->content.=$this->detail($_GET["id"]);
+					break;
 		default:	$this->content.=$this->not_implemented();
 		}
 	}
@@ -26,13 +28,7 @@ class kunden extends page{
 	function index(){
 		$return="";
 		$db=new datenbank();
-		$kundenliste=$db->query("select * from kunden order by firma;");
-		$this->content.="<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\"><tr style=\"background-color: lightblue;\" id=\"ueberschrift\"><td>Kd-Nr</td><td>Firma</td><td>Adresse</td><td>PLZ</td><td>Ort</td></tr>\n";
-		while($kunde=$db->get_object($kundenliste)){
-			$zeile="zeile".$kunde->id;
-			$return.="<tr id=\"$zeile\" bgcolor=\"lightgrey\" onmouseover=\"changecolor('$zeile', 'lightgreen');\" onmouseout=\"changecolor('$zeile', 'lightgrey');\" onclick=\"document.location.href='index.php?action=detail&sub=kunden&id=$kunde->id'\"><td>$kunde->kdnr</td><td>$kunde->firma</td><td>$kunde->strasse $kunde->hausnummer</td><td>$kunde->plz</td><td>$kunde->ort</td></tr>\n";
-		}
-		$return.="</table>\n";
+		$return.=faktura::table("select kunden.kdnr as id, kunden.kdnr as Kundennummer, kunden.firma as Firma, CONCAT(kunden.strasse, ' ', kunden.hausnummer) AS Adresse, kunden.plz as PLZ, kunden.ort AS Ort from kunden order by firma asc", $db, "kundentabelle", "Kunden", "Keine Kunden vorhanden...");
 		return $return;
 	}
 
