@@ -37,7 +37,7 @@ class pdf extends FPDF
 		$this->Line(0,93,4,93);
 		//Datum & Rechnungsnummer
 		$this->SetY(90);
-		$this->Cell(60, 4, "Rechnungsnummer");
+		$this->Cell(60, 4, "Unser Zeichen");
 		$this->Cell(100, 4, "Datum", 0, 0, "R");
 		//Line break
 		$this->Ln(15);

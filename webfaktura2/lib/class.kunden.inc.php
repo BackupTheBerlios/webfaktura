@@ -6,19 +6,23 @@ class kunden extends page{
 	function constructor($action){
 		$this->kunden($action);
 	}
-	
+
 	function kunden($action){
 		parent::constructor($action);
 		switch($action){
 		case "index":	$this->content.=$this->index(); break;
 		case "detail":	$this->content.=$this->detail($_GET["id"]); break;
-		case "rechnung_neu":	$this->content.=$this->rechnung_neu($_GET["id"]); 
+		case "rechnung_neu":	$this->content.=$this->rechnung_neu($_GET["id"]);
 					$this->content.=$this->detail($_GET["id"]);
 					break;
 		case "rechnung_fertig":	$this->content.=$this->rechnung_fertig($_GET["id"]);
 					$this->content.=$this->rechnung_pdf($_GET["id"]);
 					break;
 		case "rechnung_pdf":	$this->content.=$this->rechnung_pdf($_GET["id"]);
+					break;
+		case "za_neu":		$this->content.=$this->za_neu($_GET["id"]);
+					break;
+		case "za_pdf":		$this->content.=$this->za_pdf($_GET["id"]);
 					break;
 		default:	$this->content.=$this->not_implemented();
 		}
@@ -68,7 +72,10 @@ class kunden extends page{
 		//fertige Rechnungen
 		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer from rechnungen where rechnungen.datum is NULL and rechnungen.kunde=$kunde->kdnr", $db, "fertigrechnung", "fertige Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_fertig&id=ID\">Freigeben</a>");
 		//offene Rechnungen
-		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer, rechnungen.datum as Datum, rechnungen.faellig as Faellig from rechnungen where rechnungen.kunde=$kunde->kdnr and rechnungen.datum is not null and rechnungen.bezahlt='Nein'", $db, "offenerechnung", "offene Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_pdf&id=ID\">Ansicht</a>","Bearbeiten");
+		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer, rechnungen.datum as Datum, rechnungen.faellig as Faellig from rechnungen where rechnungen.kunde=$kunde->kdnr and rechnungen.datum is not null and rechnungen.bezahlt='Nein'", $db, "offenerechnung", "offene Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=za_neu&id=ID\">Zahlungserinnerung</a>");
+		//Zahlungserinnerungen
+		$return.=faktura::table("select zahlungserinnerungen.zanr as id, zahlungserinnerungen.zanr as Nummer, zahlungserinnerungen.renr as Rechnungsnummer, zahlungserinnerungen.datum as Datum, zahlungserinnerungen.faellig as Faellig from zahlungserinnerungen where zahlungserinnerungen.kdnr=$kunde->kdnr and zahlungserinnerungen.bezahlt='Nein'", $db, "offeneza", "offene Zahlungserinnerung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=za_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_neu&id=ID\">Mahnung</a>");
+
 		return $return;
 	}
 
@@ -149,6 +156,51 @@ class kunden extends page{
 		$pdf->Ln();
 		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Rechnungsbetrag bis spätestens zum $rechnung->faellig auf das unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit mit Ihnen würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
 		$pdf->Ln(15);
+		$pdf->Write(5, $GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
+		$pdf->Image($GLOBALS["conf"]["rechnung"]["unterschrift"],25,$pdf->GetY()-10,50);
+		$this->output=0;
+		$pdf->Output();
+		return $return;
+	}
+
+	function za_neu($id){
+		$return="";
+		$db=new datenbank();
+		$query="select rechnungen.kunde from rechnungen where rechnungen.renr='$id'";
+		$result=$db->query($query);
+		$kd=$db->get_object($result);
+		$kdnr=$kd->kunde;
+		$zanr=$this->gen_renr("ZA");
+		$query="insert into zahlungserinnerungen values('$zanr','$id','$kdnr','".date("Y-m-d")."', '".date("Y-m-d",time()+1209600)."', 'Nein')";
+		$db->query($query);
+		return $return;
+	}
+
+	function za_pdf($id){
+		$return="";
+		$db=new datenbank();
+		$query="select * from zahlungserinnerungen where zanr='$id'";
+		$result=$db->query($query);
+		$za=$db->get_object($result);
+		$query="select * from rechnungen where renr='$za->renr'";
+		$result=$db->query($query);
+		$re=$db->get_object($result);
+		$kunde=$db->get_object($db->query("select * from kunden where kdnr='$za->kdnr'"));
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$re->renr' GROUP BY mwst.satz");
+		$betrag=$db->get_object($result);
+
+		$pdf=new pdf('P', 'mm', 'A4');
+		$pdf->Open();
+		$pdf->AddPage();
+		$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort, $za->zanr, $za->datum);
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Cell(80,5,"Zahlungserinnerung");
+		$pdf->Ln(10);
+		$pdf->SetFont("Arial", "", 10);
+		$pdf->Write(5, "Sehr geehrte Damen und Herren,\nsicherlich haben Sie es nur übersehen, die ausstehende Rechnung $re->renr vom $re->datum über ".number_format($betrag->Gesamt+$betrag->MWST,2,",",".").EURO." EUR zu begleichen.\nIch bitte Sie, dieses bis spätestens zum $za->faellig nachzuholen.\n\nSollte sich ihre Zahlung mit diesem Schreiben gekreuzt haben, so ist dieses Schreiben natürlich gegenstandslos. Für Fragen stehen ich ihnen gerne unter der oben genannten Adresse zur Verfügung.");
+		$pdf->Ln(30);
+		$pdf->Write(5, "Mit freundlichen Grüßen");
+		$pdf->Ln(20);
 		$pdf->Write(5, $GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
 		$pdf->Image($GLOBALS["conf"]["rechnung"]["unterschrift"],25,$pdf->GetY()-10,50);
 		$this->output=0;
