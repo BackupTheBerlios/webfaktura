@@ -243,7 +243,7 @@ class kunden extends page{
 	function ma_stufe2($id){
 		$return="";
 		$db=new datenbank();
-		$query="select zahlungserinnerungen.kdnr, zahlungserinnerungen.renr  from zahlungserinnerungen where zahlungserinnerungen.zanr='$id'";
+		$query="select mahnungen.kdnr, mahnungen.renr  from mahnungen where mahnungen.manr='$id'";
 		$result=$db->query($query);
 		$kd=$db->get_object($result);
 		$renr=$kd->renr;
