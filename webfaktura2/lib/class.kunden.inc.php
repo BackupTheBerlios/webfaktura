@@ -136,14 +136,15 @@ class kunden extends page{
 		$pdf->Ln();
 		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' GROUP BY mwst.satz");
 		$betrag=$db->get_object($result);
-		$pdf->Cell(170,5,"Gesamt: ".number_format($betrag->Gesamt,2,",",".").EURO, 0, 1, 'R');
-		$pdf->Cell(170,5,"MwSt (".number_format($betrag->satz)."%): ".number_format($betrag->MWST,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Cell(155,5,"Gesamt: ".number_format($betrag->Gesamt,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Cell(155,5,"MwSt (".number_format($betrag->satz)."%): ".number_format($betrag->MWST,2,",",".").EURO, 0, 1, 'R');
 		$pdf->Ln();
-		$pdf->Cell(170,5,"Rechnungsbetrag: ".number_format($betrag->Gesamt+$betrag->MWST,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Cell(155,5,"Rechnungsbetrag: ".number_format($betrag->Gesamt+$betrag->MWST,2,",",".").EURO, 0, 1, 'R');
 		$pdf->Ln();
 		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Rechnungsbetrag bis spätestens zum $rechnung->faellig auf das unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit mit Ihnen würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
 		$pdf->Ln(10);
 		$pdf->Write(5, $GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
+		$pdf->Image($GLOBALS["conf"]["rechnung"]["unterschrift"],25,170,50);
 		$this->output=0;
 		$pdf->Output();
 		return $return;
