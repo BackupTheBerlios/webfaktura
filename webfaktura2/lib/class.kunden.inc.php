@@ -120,7 +120,7 @@ class kunden extends page{
 		$pdf->AddPage();
 		//$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort);
 		$pdf->SetFont('Arial','',12);
-		$pdf->Cell(40,10,'$rechnung->renr');
+		$pdf->Cell(40,10,$rechnung->renr." ".$rechnung->kunde);
 		$this->output=0;
 		$pdf->Output();
 		return $return;
