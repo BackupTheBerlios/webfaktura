@@ -113,7 +113,7 @@ class kunden extends page{
 		$db=new datenbank();
 		$result_rechnung=$db->query("select * from rechnungen where renr='$id'");
 		$rechnung=$db->get_object($result_rechnung);
-		$result_kunde=$db->query("select * from kunden where kdnr='$rechnung->kunde'");
+		$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
 		$kunde=$db->get_object($result_kunde);
 		$pdf=new pdf('P', 'mm', 'A4');
 		$pdf->Open();
