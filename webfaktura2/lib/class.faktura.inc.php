@@ -2,7 +2,7 @@
 ### class.faktura.inc.php - Basisfunktinen
 
 class faktura{
-	function table($query, $db, $id="tabelle", $anzahlstring="", $fehlerstring="", $function1="", $function2="", $gfunction1="&nbsp", $gfunction2="&nbsp"){
+	function table($query, $db, $id="tabelle", $anzahlstring="&nbsp;", $fehlerstring="", $function1="", $function2="", $gfunction1="&nbsp", $gfunction2="&nbsp"){
 		$return="";
 		$result=$db->query($query);
 		if($db->num($result)>0){
@@ -10,7 +10,9 @@ class faktura{
 			$nr=0;
 			if($function1!=""){$nr+=1;}
 			if($function2!=""){$nr+=1;}
-			$return.="<tr><td colspan=\".$num+$nr-1.\">".$db->num($result)." ".$anzahlstring."</td><td align=\"right\">$gfunction1</td><td align=\"right\">$gfunction2</td></tr>\n";
+			$return.="<tr><td colspan=\".$num+$nr-1.\">";
+			if($anzahlstring!=("" OR "&nbsp;"){$return.=$db->num($result)." ";}
+			$return.=$anzahlstring."</td><td align=\"right\">$gfunction1</td><td align=\"right\">$gfunction2</td></tr>\n";
 			$return.="<tr>";
 			if($function1!=""){
 				$return.="<td>&nbsp;</td>";
