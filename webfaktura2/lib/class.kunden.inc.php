@@ -98,7 +98,7 @@ class kunden extends page{
 	function rechnung_fertig($id){
 		$return="";
 		$db=new datenbank();
-		$query="update rechnungen set datum='".date("Y-m-d")."', set faellig='".date("Y-m-d",time()+1209600)."' where renr='$id'";
+		$query="update rechnungen set datum='".date("Y-m-d")."', faellig='".date("Y-m-d",time()+1209600)."' where renr='$id'";
 		$result=$db->query($query);
 		$return.=$query;
 		return $return;
