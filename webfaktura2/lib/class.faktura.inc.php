@@ -10,14 +10,14 @@ class faktura{
 			$return.="<tr><td colspan=\"3\">".$db->num($result)." ".$anzahlstring."</td><td align=\"right\">&nbsp;</td></tr>\n";
 			$return.="<tr style=\"background-color: lightblue\">";
 			$num=$db->num_fields($result);
-				for($i=1, $i<$num, $i++){
+			for($i=1; $i<$num; $i++){
 				$return.="<td>".$db->fieldname($result, $i)."</td>";
 			}
 			$return.="</tr>\n";
 			while($posten=$db->get_row($result)){
 				$zeile="zeile"+$id+$posten[0]
 				$return.="<tr id=\"$zeile\" style=\"background-color: lightgrey\" onmouseover=\"changecolor('$zeile','lightgreen');\" onmouseout=\"changecolor('$zeile','lightgrey');\">";
-				for($i=1, $i<$num, $i++){
+				for($i=1; $i<$num; $i++){
 					$return.="<td>$posten[$i]</td>";
 				}
 				$return.="</tr>\n";
