@@ -93,9 +93,9 @@ class kunden extends page{
 		$result=$db->query("select * from kunden where id=$id");
 		$kunde=$db->get_object($result);
 		$renr=$this->gen_renr("RE");
-		$query="begin\n";
-		$query.="insert into rechnungen (renr, kunde) values($renr, $id)\n";
-		$query.="update posten set rechnung='RE51463' where kunde=$id and rechnung is NULL\n";
+		$query="begin;\n";
+		$query.="insert into `rechnungen` (`renr`, `kunde`) values('$renr', $id);\n";
+		$query.="update posten set rechnung='RE51463' where kunde=$id and rechnung is NULL;\n";
 		$query.="commit;";
 		$result=$db->query($query);
 		$return.=$query;
