@@ -19,11 +19,22 @@ class datenbank{
 	}
 	
 	function get_object($result){
-		return mysql_fetch_object($result, $this->link);
+		return mysql_fetch_object($result);
 	}
-	
+
+	function get_row($result){
+		return mysql_fetch_row($result);
+	}
 	function num($result){
 		return mysql_num_rows($result);
+	}
+	
+	function num_fields($result){
+		return mysql_num_fields($result);
+	}
+	
+	function fieldname($result, $index){
+		return mysql_field_name($result, $index);
 	}
 }
 
