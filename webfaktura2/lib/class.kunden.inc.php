@@ -68,7 +68,7 @@ class kunden extends page{
 		//fertige Rechnungen
 		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer from rechnungen where rechnungen.datum is NULL and rechnungen.kunde=$kunde->kdnr", $db, "fertigrechnung", "fertige Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_fertig&id=ID\">Freigeben</a>");
 		//offene Rechnungen
-		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer, rechnungen.datum as Datum, rechnungen.faellig as Faellig from rechnungen where rechnungen.kunde=$kunde->kdnr and rechnungen.datum is not null and rechnungen.bezahl='Nein'", $db, "offenerechnung", "offene Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_pdf&id=ID\">Ansicht</a>","Bearbeiten");
+		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer, rechnungen.datum as Datum, rechnungen.faellig as Faellig from rechnungen where rechnungen.kunde=$kunde->kdnr and rechnungen.datum is not null and rechnungen.bezahlt='Nein'", $db, "offenerechnung", "offene Rechnung(en) gefunden", "", "<a href=\"index.php?sub=kunden&action=rechnung_pdf&id=ID\">Ansicht</a>","Bearbeiten");
 		return $return;
 	}
 
