@@ -1,5 +1,9 @@
 2002-09-17  Philipp Kirchner <mail@philippkirchner.de>
 
+	* Erstes Modul für Kundenverwaltung portieren
+
+2002-09-17  Philipp Kirchner <mail@philippkirchner.de>
+
 	* Fehler im Fehler beseitigt, MySQL-Fehlerbehandlung nun ok
 
 2002-09-17  Philipp Kirchner <mail@philippkirchner.de>
