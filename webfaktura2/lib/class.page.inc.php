@@ -23,7 +23,8 @@ class page{
 	#####################################################
 	# Variable für action
 	var $action;
-
+	var $output=1;
+	
 	#####################################################
 	# Konstruktor: nutzt input, um Seite zu erkennen
 	function constructor($action){ $this->page($action); }
@@ -53,7 +54,7 @@ class page{
 		$output.="<div id=\"content\" style=\"position: absolute; top: 30px; left: 10px; width: 100%; height: 100%;\" onmouseover=\"reset();\">".$this->content."</div>";
 		$output.="<script language=\"JavaScript\">init();</script>";
 		$output.=$this->footer;
-		return $output;
+		if($this->output){return $output;}
 	}
 }
 ?>

@@ -80,16 +80,30 @@ class kunden extends page{
 	
 	function rechnung_neu($id){
 		$return="";
-		$return.="$id";
 		$db=new datenbank();
 		$result=$db->query("select * from kunden where id=$id");
 		$kunde=$db->get_object($result);
+		$result=$db->query("select * from posten where kunde=$id and rechnung is NULL");
+		$result=$db->query("insert into rechnungen values('RE51463',$id,'','')");
+		$result=$db->query("update posten set rechnung='RE51463' where kunde=$id and rechnung is NULL");
+		$return.="Rechnung generiert!";
+		return $return;
+	}
+	
+	function rechnung_pdf($id){
+		$return="";
+		$db=new datenbank();
+		$result_rechnung=$db->query("select * from rechnungen where id=$id");
+		$rechnung=$db->get_object($result_rechnung);
+		$result_kunde=$db->query("select * from kunden where id=$rechnung->kunde");
+		$kunde=$db->get_object($result_kunde);
 		$pdf=new pdf('P', 'mm', 'A4');
 		$pdf->Open();
 		$pdf->AddPage();
 		$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort);
 		$pdf->SetFont('Arial','',12);
 		$pdf->Cell(40,10,'Hello World!');
+		$this->output=0;
 		$pdf->Output();
 		return $return;
 	}
