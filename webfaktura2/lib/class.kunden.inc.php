@@ -26,6 +26,10 @@ class kunden extends page{
 					break;
 		case "ma_neu":	$this->content.=$this->ma_neu($_GET["id"]);
 					break;
+		case "mahnung_stufe2":	$this->content.=$this->ma_stufe2($_GET["id"]);
+					break;
+		case "ma2_pdf":		$this->content.=$this->ma2_pdf($_GET["id"]);
+					break;
 		case "ma_pdf":		$this->content.=$this->ma_pdf($_GET["id"]);
 					break;
 		default:	$this->content.=$this->not_implemented();
@@ -82,7 +86,7 @@ class kunden extends page{
 		//Mahnungen Stufe 1
 		$return.=faktura::table("select mahnungen.manr as id, mahnungen.manr as Nummer, mahnungen.renr as Rechnungsnummer, mahnungen.datum as Datum, mahnungen.faellig as Faellig from mahnungen where mahnungen.kdnr=$kunde->kdnr and mahnungen.bezahlt='Nein' and mahnungen.stufe='1'", $db, "offenema1", "offene Mahnung(en)  Stufe 1 gefunden", "", "<a href=\"index.php?sub=kunden&action=ma_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_stufe2&id=ID\">Stufe 2</a>");
 		//Mahnungen Stufe 2
-		$return.=faktura::table("select mahnungen.manr as id, mahnungen.manr as Nummer, mahnungen.renr as Rechnungsnummer, mahnungen.datum as Datum, mahnungen.faellig as Faellig from mahnungen where mahnungen.kdnr=$kunde->kdnr and mahnungen.bezahlt='Nein' and mahnungen.stufe='2'", $db, "offenema2", "offene Mahnung(en)  Stufe 2 gefunden", "", "<a href=\"index.php?sub=kunden&action=ma_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_stufe3&id=ID\">Stufe 3</a>");
+		$return.=faktura::table("select mahnungen.manr as id, mahnungen.manr as Nummer, mahnungen.renr as Rechnungsnummer, mahnungen.datum as Datum, mahnungen.faellig as Faellig from mahnungen where mahnungen.kdnr=$kunde->kdnr and mahnungen.bezahlt='Nein' and mahnungen.stufe='2'", $db, "offenema2", "offene Mahnung(en)  Stufe 2 gefunden", "", "<a href=\"index.php?sub=kunden&action=ma2_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_stufe3&id=ID\">Stufe 3</a>");
 		//Mahnungen Stufe 3
 		$return.=faktura::table("select mahnungen.manr as id, mahnungen.manr as Nummer, mahnungen.renr as Rechnungsnummer, mahnungen.datum as Datum, mahnungen.faellig as Faellig from mahnungen where mahnungen.kdnr=$kunde->kdnr and mahnungen.bezahlt='Nein' and mahnungen.stufe='3'", $db, "offenema3", "offene Mahnung(en)  Stufe 3 gefunden", "", "<a href=\"index.php?sub=kunden&action=ma_pdf&id=ID\">Ansicht</a>","<a href=\"index.php?sub=kunden&action=mahnung_stufe4&id=ID\">Stufe 4</a>");
 
@@ -236,6 +240,23 @@ class kunden extends page{
 		return $return;
 	}
 
+	function ma_stufe2($id){
+		$return="";
+		$db=new datenbank();
+		$query="select zahlungserinnerungen.kdnr, zahlungserinnerungen.renr  from zahlungserinnerungen where zahlungserinnerungen.zanr='$id'";
+		$result=$db->query($query);
+		$kd=$db->get_object($result);
+		$renr=$kd->renr;
+		$kdnr=$kd->kdnr;
+		$manr=$this->gen_renr("MA");
+		$query="insert into mahnungen values('$manr','$renr','$kdnr','".date("Y-m-d")."', '".date("Y-m-d",time()+1209600)."', 'Nein','2')";
+		$db->query($query);
+		$query="insert into posten values('','$kdnr','".date("Y-m-d")."','4','1.00','','$renr')";
+		$db->query($query);
+		return $return;
+	}
+
+
 		function ma_pdf($id){
 		$return="";
 		$db=new datenbank();
@@ -285,5 +306,56 @@ class kunden extends page{
 		$pdf->Output();
 		return $return;
 	}
+
+		function ma2_pdf($id){
+		$return="";
+		$db=new datenbank();
+		$query="select * from rechnungen,mahnungen  where rechnungen.renr=mahnungen.renr and mahnungen.manr='$id'";
+		$result=$db->query($query);
+		$rechnung=$db->get_object($result);
+		$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
+		$kunde=$db->get_object($result_kunde);
+		$pdf=new pdf('P', 'mm', 'A4');
+		$pdf->Open();
+		$pdf->AddPage();
+		$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort, $rechnung->manr, $rechnung->datum);
+		$pdf->SetFont('Arial','B',12);
+		$pdf->Cell(80,5,"Mahnung");
+		$pdf->Ln(10);
+		$pdf->SetFont("Arial", "", 10);
+		$pdf->Write(5, "Sehr geehrte Damen und Herren,\nleider konnte ich noch keinen Zahlungseingang zur Rechnung $rechnung->renr feststellen. Hier die Auflistung der aufgrund dieser Rechnung unbezahlten Posten::\n\n");
+		$query="select posten.datum as Datum, posten.kommentar as Beschreibung, posten.anzahl as Anzahl, produkte.name as Artikel, produkte.preis as Preis, (produkte.preis*posten.anzahl) as Summe from posten, produkte where posten.rechnung='$rechnung->renr' and produkte.id=posten.produkt";
+		$result=$db->query($query);
+		$header=array("Datum", "Beschreibung", "Anzahl", "Artikel", "Preis", "Summe");
+		while($data[]=$db->get_row($result))
+		{
+		}
+		$gammel=array_pop($data);
+		$pdf->table($header, $data);
+		$pdf->Ln();
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id!='3' AND produkte.id!=4 GROUP BY mwst.satz");
+		$betrag=$db->get_object($result);
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id = '3' AND produkte.id='4' GROUP BY mwst.satz");
+		$betrag2=$db->get_object($result);
+		$pdf->Cell(100,5,"", 0, 0, 'L');
+		$pdf->Cell(35,5,"Gesamt:",0,0,'L');
+		$pdf->Cell(20,5,number_format(($betrag->Gesamt+$betrag2->Gesamt),2,",",".").EURO, 0, 1, 'R');
+		$pdf->Cell(100,5,"", 0, 0, 'L');
+		$pdf->Cell(35,5,"Mehrwertsteuer (".number_format($betrag->satz)."%):", 0, 0, 'L');
+		$pdf->Cell(20,5,number_format($betrag->MWST,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Ln();
+		$pdf->Cell(100,5,"", 0, 0, 'L');
+		$pdf->Cell(35,5,"Mahnbetrag:", 0, 0, 'L');
+		$pdf->Cell(20,5,number_format($betrag->Gesamt+$betrag2->Gesamt+$betrag->MWST,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Ln();
+		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Betrag bis spätestens zum $rechnung->faellig auf das unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit mit Ihnen würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
+		$pdf->Ln(15);
+		$pdf->Write(5, $GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
+		$pdf->Image($GLOBALS["conf"]["rechnung"]["unterschrift"],25,$pdf->GetY()-10,50);
+		$this->output=0;
+		$pdf->Output();
+		return $return;
+	}
+
 
 }
