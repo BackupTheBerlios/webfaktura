@@ -86,7 +86,7 @@ class pdf extends FPDF
     		foreach($data as $row)
     		{
         		$this->Cell($w[0],4,$row[0],'LR');
-        		$this->Cell($w[1],4,substr($row[1],0,35),'LR');
+        		$this->Cell($w[1],4,substr($row[1],0,30),'LR');
 			$this->Cell($w[2],4,number_format($row[2],2,",","."),'LR',0,'R');
         		$this->Cell($w[3],4,$row[3],'LR');
 			$this->Cell($w[4],4,number_format($row[4],2,",",".").EURO, 'LR', 0, 'R');
