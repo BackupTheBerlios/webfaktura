@@ -125,7 +125,7 @@ class kunden extends page{
 		$pdf->Ln(10);
 		$pdf->SetFont("Arial", "", 10);
 		$pdf->Write(5, "Sehr geehrte Damen und Herren,\nhiermit erlaube ich mir folgendes in Rechnung zu stellen:");
-		$query="select posten.datum as Datum, posten.kommentar as Beschreibung, posten.anzahl as Anzahl, produkte.name as Artikel, produkte.preis as Preis, (produkte.preis*posten.anzahl) as Summe from posten, produkte where posten.rechnung='$id' and $produkte.id=$posten.produkt";
+		$query="select posten.datum as Datum, posten.kommentar as Beschreibung, posten.anzahl as Anzahl, produkte.name as Artikel, produkte.preis as Preis, (produkte.preis*posten.anzahl) as Summe from posten, produkte where posten.rechnung='$id' and produkte.id=posten.produkt";
 		$result=$db->query($query);
 		$header=array("Datum", "Beschreibung", "Anzahl", "Artikel", "Preis", "Summe");
 		while($data[]=$db->get_row($result))
