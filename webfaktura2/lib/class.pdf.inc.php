@@ -76,7 +76,7 @@ class pdf extends FPDF
 	
 	function table($header, $data){
 		//Column widths
-    		$w=array(20,60,10,30,15,15);
+    		$w=array(20,60,15,40,15,15);
     		//Header
     		for($i=0;$i<count($header);$i++)
         		$this->Cell($w[$i],7,$header[$i],1,0,'C');
@@ -86,10 +86,10 @@ class pdf extends FPDF
     		{
         		$this->Cell($w[0],6,$row[0],'LR');
         		$this->Cell($w[1],6,$row[1],'LR');
-			$this->Cell($w[2],6,number_format($row[2]),'LR',0,'R');
+			$this->Cell($w[2],6,number_format($row[2],2,",","."),'LR',0,'R');
         		$this->Cell($w[3],6,$row[3],'LR');
-			$this->Cell($w[4],6,number_format($row[4])." ¤", 'LR');
-			$this->Cell($w[5],6,number_format($row[5])." ¤", 'LR');
+			$this->Cell($w[4],6,number_format($row[4],2,",",".")." ¤", 'LR');
+			$this->Cell($w[5],6,number_format($row[5],2,",",".")." ¤", 'LR');
         		$this->Ln();
     		}
     		//Closure line
