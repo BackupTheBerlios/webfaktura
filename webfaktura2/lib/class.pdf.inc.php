@@ -39,7 +39,7 @@ class pdf extends FPDF
 		$this->Cell(60, 4, "Rechnungsnummer");
 		$this->Cell(100, 4, "Datum", 0, 0, "R");
 		//Line break
-		$this->Ln(10);
+		$this->Ln(15);
 		$this->SetFont("Arial","",10);
 	}
 
