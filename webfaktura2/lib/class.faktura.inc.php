@@ -2,7 +2,7 @@
 ### class.faktura.inc.php - Basisfunktinen
 
 class faktura{
-	function table($query, $db, $id, $anzahlstring, $fehlerstring, $function="&nbsp";){
+	function table($query, $db, $id, $anzahlstring, $fehlerstring, $function="&nbsp"){
 		$return="";
 		$result=$db->query($query);
 		if($db->num($result)>0){
