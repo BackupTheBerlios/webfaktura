@@ -4,7 +4,9 @@
 #
 #
 #
-#
+# 
+# initializiere alles
+include("lib/init.php");
 
 
 
