@@ -18,7 +18,7 @@ class kunden extends page{
 		case "rechnung_fertig":	$this->content.=$this->rechnung_fertig($_GET["id"]);
 					$this->content.=$this->rechnung_pdf($_GET["id"]);
 					break;
-		case "rechnung_pdf":	$this->content.=$this->rechnung_pdf($G_GET["id"]);
+		case "rechnung_pdf":	$this->content.=$this->rechnung_pdf($_GET["id"]);
 					break;
 		default:	$this->content.=$this->not_implemented();
 		}
@@ -114,18 +114,16 @@ class kunden extends page{
 		$query="select * from rechnungen where renr='$id'";
 		$result=$db->query($query);
 		$rechnung=$db->get_object($result);
-		//$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
-		//$kunde=$db->get_object($result_kunde);
+		$result_kunde=$db->query("select * from kunden where kdnr=$rechnung->kunde");
+		$kunde=$db->get_object($result_kunde);
 		$pdf=new pdf('P', 'mm', 'A4');
 		$pdf->Open();
 		$pdf->AddPage();
-		//$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort);
+		$pdf->empfaenger($kunde->firma, $kunde->strasse." ".$kunde->hausnummer, $kunde->plz." ".$kunde->ort);
 		$pdf->SetFont('Arial','',12);
 		$pdf->Cell(40,10,$rechnung->renr." ".$rechnung->kunde);
-		//$this->output=0;
-		//$pdf->Output();
-		$return.=$query;
-		$return.=$rechnung->renr;
+		$this->output=0;
+		$pdf->Output();
 		return $return;
 	}
 }
