@@ -335,8 +335,10 @@ class kunden extends page{
 		$pdf->Ln();
 		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id!='3' AND produkte.id!='4' GROUP BY mwst.satz");
 		$betrag=$db->get_object($result);
-		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id =('3' OR '4') GROUP BY mwst.satz");
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id ='3' GROUP BY mwst.satz");
 		$betrag2=$db->get_object($result);
+		$result=$db->query("SELECT Sum( posten.anzahl * produkte.preis )  AS Gesamt, Sum( posten.anzahl * produkte.preis * mwst.satz / 100  ) AS MWST, mwst.satz FROM posten, produkte, mwst WHERE produkte.id = posten.produkt AND mwst.id = produkte.mwst AND posten.rechnung =  '$rechnung->renr' AND produkte.id ='4' GROUP BY mwst.satz");
+		$betrag3=$db->get_object($result);
 		$pdf->Cell(100,5,"", 0, 0, 'L');
 		$pdf->Cell(35,5,"Gesamt:",0,0,'L');
 		$pdf->Cell(20,5,number_format(($betrag2->Gesamt),2,",",".").EURO, 0, 1, 'R');
@@ -346,7 +348,7 @@ class kunden extends page{
 		$pdf->Ln();
 		$pdf->Cell(100,5,"", 0, 0, 'L');
 		$pdf->Cell(35,5,"Mahnbetrag:", 0, 0, 'L');
-		$pdf->Cell(20,5,number_format($betrag->Gesamt+$betrag2->Gesamt+$betrag->MWST,2,",",".").EURO, 0, 1, 'R');
+		$pdf->Cell(20,5,number_format($betrag2->Gesamt+$betrag->Gesamt+$betrag3->Gesamt+$betrag->MWST,2,",",".").EURO, 0, 1, 'R');
 		$pdf->Ln();
 		$pdf->Write(5, "Bitte überweisen Sie den oben genannten Betrag bis spätestens zum $rechnung->faellig auf das unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit mit Ihnen würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
 		$pdf->Ln(15);
