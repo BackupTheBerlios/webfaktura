@@ -63,7 +63,9 @@ class kunden extends page{
 		$return.="</table>\n";
 		$return.="</td></tr>\n</table><br><br><br>\n";
 		//Offene Posten
-		$return.=faktura::table("select posten.id as id, posten.datum as Datum, produkte.name as Produkt, posten.anzahl as Anzahl, posten.kommentar as Kommentar from posten,produkte where kunde=$kunde->id and isnull(rechnung) and produkte.id=posten.produkt order by datum", $db, "offeneposten", "fakturierbare Posten gefunden:", "Keine fakturierbaren Posten vorhanden...", "<a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->id\">Rechnung stellen</a>");
+		$return.=faktura::table("select posten.id as id, posten.datum as Datum, produkte.name as Produkt, posten.anzahl as Anzahl, posten.kommentar as Kommentar from posten,produkte where kunde=$kunde->id and isnull(rechnung) and produkte.id=posten.produkt order by datum", $db, "offeneposten", "fakturierbare(r) Poste(n) gefunden:", "Keine fakturierbaren Posten vorhanden...", "<a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->id\">Rechnung stellen</a>");
+		//fertige Rechnungen
+		$return.=faktura::table("select rechnungen.renr as id, rechnungen.renr as Rechnungsnummer from rechnungen where rechnungen.datum is NULL", $db, "fertigrechnung", "fertige Rechnung(en) gefunden");
 		return $return;
 	}
 
