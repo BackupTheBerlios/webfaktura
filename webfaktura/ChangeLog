@@ -1,3 +1,7 @@
+2002-10-02  Philipp Kirchner <mail@philippkirchner.de>
+	* Bugfixes for PHP 4.2
+	* Notice that this application is Alpha and lacks a lot of funtionality!
+
 2002-09-21  Philipp Kirchner <mail@philippkirchner.de>
 
 	* Rechnungsmodul fertig
