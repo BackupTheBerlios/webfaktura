@@ -10,7 +10,8 @@ class faktura{
 			$nr=0;
 			if($function1!=""){$nr+=1;}
 			if($function2!=""){$nr+=1;}
-			$return.="<tr><td colspan=\"".($num+$nr)-1."\">";
+			$num=$db->num_fields($result);
+			$return.="<tr><td colspan=\"".$num+$nr-1."\">";
 			if(($anzahlstring!="") AND ($anzahlstring!="&nbsp;")){$return.=$db->num($result)." ";}
 			$return.=$anzahlstring."</td><td align=\"right\">$gfunction1</td><td align=\"right\">$gfunction2</td></tr>\n";
 			$return.="<tr>";
