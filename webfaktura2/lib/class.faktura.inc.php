@@ -15,7 +15,7 @@ class faktura{
 			}
 			$return.="</tr>\n";
 			while($posten=$db->get_row($result)){
-				$zeile="zeile"+$id+$posten[0]
+				$zeile="zeile"+$id+$posten[0];
 				$return.="<tr id=\"$zeile\" style=\"background-color: lightgrey\" onmouseover=\"changecolor('$zeile','lightgreen');\" onmouseout=\"changecolor('$zeile','lightgrey');\">";
 				for($i=1; $i<$num; $i++){
 					$return.="<td>$posten[$i]</td>";
