@@ -63,33 +63,7 @@ class kunden extends page{
 		$return.="</table>\n";
 		$return.="</td></tr>\n</table><br><br><br>\n";
 		//Offene Posten
-		$return.=faktura::table("select posten.id as id, posten.datum as Datum, produkte.name as Produkt, posten.anzahl as Anzahl, posten.kommentar as Kommentar from posten,produkte where kunde=$kunde->id and isnull(rechnung) and produkte.id=posten.produkt order by datum", $db, "offeneposten", "fakturierbare Posten gefunden:", "Keine fakturierbaren Posten vorhanden");
-		/*$fakturaliste=$db->query("select posten.id, posten.datum, posten.anzahl, posten.kommentar, produkte.name as produktname from posten,produkte where kunde=$kunde->id and isnull(rechnung) and produkte.id=posten.produkt order by datum");
-		if($db->num($fakturaliste)>0){
-			$return.="<table border=\"0\" cellpadding=\"2\" cellspacing=\"2\" width=\"100%\">\n";
-			$return.="<tr><td colspan=\"3\">".$db->num($fakturaliste)." fakturierbare Posten gefunden:</td><td align=\"right\"><a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->id\">Rechnung stellen</a></td></tr>\n";
-			$return.="<tr style=\"background-color: lightblue\"><td>Datum</td><td>Produkt</td><td>Anzahl</td><td>Kommentar</td></tr>\n";
-			while($posten=$db->get_object($fakturaliste)){
-				$zeile="zeilefak"+$posten->id;
-				$return.="<tr id=\"$zeile\" style=\"background-color: lightgrey\" onmouseover=\"changecolor('$zeile','lightgreen');\" onmouseout=\"changecolor('$zeile','lightgrey');\"><td>$posten->datum</td><td>$posten->produktname</td><td>$posten->anzahl</td><td>$posten->kommentar</td></tr>\n";
-			}
-			$return.="</table>\n";
-		}else {
-			$return.="Keine fakturierbaren Posten vorhanden...";
-		}
-		//Fertige Rechnungen
-		$result=$db->query("select posten.id, posten.datum, posten.anzahl, posten.kommentar, produkte.name as produktname from posten,produkte where kunde=$kunde->id and isnull(rechnung) and produkte.id=posten.produkt order by datum");
-		if($db->num($result)>0){
-			$return.="<table border=\"0\" cellpadding=\"2\" cellspacing=\"2\" width=\"100%\">\n";
-			$return.="<tr><td colspan=\"3\">".$db->num($fakturaliste)." fakturierbare Posten gefunden:</td><td align=\"right\"><a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->id\">Rechnung stellen</a></td></tr>\n";
-			$return.="<tr style=\"background-color: lightblue\"><td>Datum</td><td>Produkt</td><td>Anzahl</td><td>Kommentar</td></tr>\n";
-			while($posten=$db->get_object($result)){
-				$zeile="zeilefer"+$posten->id;
-				$return.="<tr id=\"$zeile\" style=\"background-color: lightgrey\" onmouseover=\"changecolor('$zeile','lightgreen');\" onmouseout=\"changecolor('$zeile','lightgrey');\"><td>$posten->datum</td><td>$posten->produktname</td><td>$posten->anzahl</td><td>$posten->kommentar</td></tr>\n";
-			}
-			$return.="</table>\n";
-		}*/
-
+		$return.=faktura::table("select posten.id as id, posten.datum as Datum, produkte.name as Produkt, posten.anzahl as Anzahl, posten.kommentar as Kommentar from posten,produkte where kunde=$kunde->id and isnull(rechnung) and produkte.id=posten.produkt order by datum", $db, "offeneposten", "fakturierbare Posten gefunden:", "Keine fakturierbaren Posten vorhanden...", "<a href=\"index.php?sub=kunden&action=rechnung_neu&id=$kunde->id\">Rechnung stellen</a>");
 		return $return;
 	}
 
