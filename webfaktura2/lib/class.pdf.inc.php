@@ -33,12 +33,17 @@ class pdf extends FPDF
 		//Falzlinien
 		$this->Line(0,138,6,138);
 		$this->Line(0,93,4,93);
+		//Datum & Rechnungsnummer
+		$this->SetX(50);
+		$this->Cell(60, 4, "Rechnungsnummer");
+		$this->Cell(80, 4, "Datum", 0, 0, "R");
 		//Line break
 		$this->SetLeftMargin(25);
 		$this->Ln(60);
+		$this->SetFont("Arial","",10);
 	}
 
-	function empfaenger($firma, $strasse, $ort){
+	function empfaenger($firma, $strasse, $ort, $renr, $datum){
 		$x=$this->GetX();
 		$y=$this->GetY();
 		$this->SetFont("Arial","",10);
@@ -51,6 +56,7 @@ class pdf extends FPDF
 		$this->Ln();
 		$this->SetX(23);
 		$this->Cell(60,4, $ort);
+		$this->SetX(50);
 		$this->SetXY($x, $y);
 	}
 
