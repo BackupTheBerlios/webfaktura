@@ -133,6 +133,10 @@ class kunden extends page{
 		}
 		$gammel=array_pop($data);
 		$pdf->table($header, $data);
+		$this->Ln();
+		$this->Write("Bitte überweisen Sie den oben genannten Betrag bis spätestens zum $rechnung->faellig auf des unten aufgeführte Konto.\nÜber eine weitere Zusammenarbeit würde ich mich sehr freuen und verbleibe mit freundlichen Grüßen\n");
+		$this->Ln();
+		$this->Write($GLOBALS["conf"]["rechnung"]["adresse"]["name"]);
 		$this->output=0;
 		$pdf->Output();
 		return $return;
