@@ -140,7 +140,7 @@ class kunden extends page{
 		$pdf->Cell(35,5,"Gesamt:",0,0,'L');
 		$pdf->Cell(20,5,number_format($betrag->Gesamt,2,",",".").EURO, 0, 1, 'R');
 		$pdf->Cell(100,5,"", 0, 0, 'L');
-		$pdf->Cell(35,5,"Mehrwertsteuer (".number_format($betrag->satz)."%)", 0, 0, 'L');
+		$pdf->Cell(35,5,"Mehrwertsteuer (".number_format($betrag->satz)."%):", 0, 0, 'L');
 		$pdf->Cell(20,5,number_format($betrag->MWST,2,",",".").EURO, 0, 1, 'R');
 		$pdf->Ln();
 		$pdf->Cell(100,5,"", 0, 0, 'L');
