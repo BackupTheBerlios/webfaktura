@@ -105,7 +105,7 @@ class kunden extends page{
 		$return.=$query;
 		$result=$db->query($query);
 		$return.=mysql_errno().": ".mysql_error()."<br>\n";
-		$query="commit;";
+		$query="rollback;";
 		$return.=$query;
 		$result=$db->query($query);
 		$return.=mysql_errno().": ".mysql_error()."<br>\n";
