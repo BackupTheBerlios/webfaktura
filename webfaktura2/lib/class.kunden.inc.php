@@ -101,6 +101,7 @@ class kunden extends page{
 		$query="update rechnungen set datum='".date("Y-m-d")."', faellig='".date("Y-m-d",time()+1209600)."' where renr='$id'";
 		$result=$db->query($query);
 		$return.=$query;
+		return.=$this->rechnung->pdf($id);
 		return $return;
 	}
 
